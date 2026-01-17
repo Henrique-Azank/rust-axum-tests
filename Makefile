@@ -5,11 +5,15 @@ BINARY_NAME=rust-axum-tests
 DOCKER_IMAGE=rust-axum-tests
 DOCKER_TAG=latest
 
+# Base target to show help
+
 help: ## Show this help message
 	@echo "Usage: make [target]"
 	@echo ""
 	@echo "Available targets:"
 	@awk 'BEGIN {FS = ":.*##"; printf "\n"} /^[a-zA-Z_-]+:.*?##/ { printf "  %-20s %s\n", $$1, $$2 } /^##@/ { printf "\n%s\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
+
+# Locally run commands (host)
 
 build: ## Build the application binary
 	@echo "Building $(BINARY_NAME)..."
@@ -36,6 +40,8 @@ clean: ## Clean build artifacts
 	cargo clean
 	rm -f $(BINARY_NAME)
 
+# Code Formatting and Linting
+
 fmt: ## Format code
 	@echo "Formatting code..."
 	cargo fmt
@@ -46,6 +52,8 @@ clippy: ## Run clippy linter
 
 check: fmt clippy test ## Run all checks (format, clippy, test)
 	@echo "All checks passed!"
+
+# Docker-related commands
 
 docker-build: ## Build Docker image
 	@echo "Building Docker image..."
@@ -79,6 +87,8 @@ docker-exec: ## Execute shell in app container
 
 db-shell: ## Execute psql shell in database container
 	docker-compose exec postgres psql -U postgres -d axumdb
+
+# Database migration commands
 
 install-tools: ## Install development tools
 	@echo "Installing development tools..."
