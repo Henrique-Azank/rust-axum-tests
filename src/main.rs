@@ -2,10 +2,6 @@
 use std::net::SocketAddr;
 
 // Third party dependencies
-use axum::{
-    routing::{delete, get, post, put},
-    Router,
-};
 use tower_http::trace::TraceLayer;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
@@ -44,44 +40,8 @@ async fn main() -> anyhow::Result<()> {
     database::run_migrations(&db_pool).await?;
 
     // Build application routes
-    let app = Router::new()
-        .route("/health", get(handlers::health_check))
-        // User routes
-        .route("/api/v1/users", get(handlers::user_handler::get_all_users))
-        .route("/api/v1/users", post(handlers::user_handler::create_user))
-        .route("/api/v1/users/:id", get(handlers::user_handler::get_user))
-        .route(
-            "/api/v1/users/:id",
-            put(handlers::user_handler::update_user),
-        )
-        .route(
-            "/api/v1/users/:id",
-            delete(handlers::user_handler::delete_user),
-        )
-        // Product routes
-        .route(
-            "/api/v1/products",
-            get(handlers::product_handler::get_all_products),
-        )
-        .route(
-            "/api/v1/products",
-            post(handlers::product_handler::create_product),
-        )
-        .route(
-            "/api/v1/products/:id",
-            get(handlers::product_handler::get_product),
-        )
-        .route(
-            "/api/v1/products/:id",
-            put(handlers::product_handler::update_product),
-        )
-        .route(
-            "/api/v1/products/:id",
-            delete(handlers::product_handler::delete_product),
-        )
-        // Add database pool to all routes
+    let app = handlers::router()
         .with_state(db_pool)
-        // Add tracing middleware
         .layer(TraceLayer::new_for_http());
 
     // Start server

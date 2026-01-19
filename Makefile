@@ -57,36 +57,36 @@ check: fmt clippy test ## Run all checks (format, clippy, test)
 
 docker-build: ## Build Docker image
 	@echo "Building Docker image..."
-	docker-compose build
+	docker compose build
 
 docker-up: ## Start containers in background
 	@echo "Starting containers..."
-	docker-compose up -d
+	docker compose up -d
 
 docker-down: ## Stop containers
 	@echo "Stopping containers..."
-	docker-compose down
+	docker compose down
 
 docker-down-volumes: ## Stop containers and remove volumes
 	@echo "Stopping containers and removing volumes..."
-	docker-compose down -v
+	docker compose down -v
 
 docker-logs: ## View application logs
 	@echo "Viewing logs..."
-	docker-compose logs -f app
+	docker compose logs -f app
 
 docker-logs-all: ## View all container logs
 	@echo "Viewing all logs..."
-	docker-compose logs -f
+	docker compose logs -f
 
 docker-rebuild: docker-down docker-build docker-up ## Rebuild and restart containers
 	@echo "Containers rebuilt and restarted!"
 
 docker-exec: ## Execute shell in app container
-	docker-compose exec app /bin/sh
+	docker compose exec app /bin/sh
 
 db-shell: ## Execute psql shell in database container
-	docker-compose exec postgres psql -U postgres -d axumdb
+	docker compose exec postgres psql -U postgres -d axumdb
 
 # Database migration commands
 
