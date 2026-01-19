@@ -10,6 +10,15 @@ use sqlx::PgPool;
 use crate::models::user::{CreateUser, UpdateUser, User};
 
 /// Get all users
+#[utoipa::path(
+    get,
+    path = "/api/v1/users",
+    responses(
+        (status = 200, description = "List of all users", body = [User]),
+        (status = 500, description = "Internal server error")
+    ),
+    tag = "Users"
+)]
 pub async fn get_all_users(
     State(pool): State<PgPool>,
 ) -> Result<Json<Vec<User>>, (StatusCode, String)> {
@@ -25,6 +34,19 @@ pub async fn get_all_users(
 }
 
 /// Get a single user by ID
+#[utoipa::path(
+    get,
+    path = "/api/v1/users/{id}",
+    params(
+        ("id" = i32, Path, description = "User ID")
+    ),
+    responses(
+        (status = 200, description = "User found", body = User),
+        (status = 404, description = "User not found"),
+        (status = 500, description = "Internal server error")
+    ),
+    tag = "Users"
+)]
 pub async fn get_user(
     State(pool): State<PgPool>,
     Path(id): Path<i32>,
@@ -49,6 +71,16 @@ pub async fn get_user(
 }
 
 /// Create a new user
+#[utoipa::path(
+    post,
+    path = "/api/v1/users",
+    request_body = CreateUser,
+    responses(
+        (status = 201, description = "User created successfully", body = User),
+        (status = 500, description = "Internal server error")
+    ),
+    tag = "Users"
+)]
 pub async fn create_user(
     State(pool): State<PgPool>,
     Json(payload): Json<CreateUser>,
@@ -70,6 +102,20 @@ pub async fn create_user(
 }
 
 /// Update an existing user
+#[utoipa::path(
+    put,
+    path = "/api/v1/users/{id}",
+    params(
+        ("id" = i32, Path, description = "User ID")
+    ),
+    request_body = UpdateUser,
+    responses(
+        (status = 200, description = "User updated successfully", body = User),
+        (status = 404, description = "User not found"),
+        (status = 500, description = "Internal server error")
+    ),
+    tag = "Users"
+)]
 pub async fn update_user(
     State(pool): State<PgPool>,
     Path(id): Path<i32>,
@@ -115,6 +161,19 @@ pub async fn update_user(
 }
 
 /// Delete a user
+#[utoipa::path(
+    delete,
+    path = "/api/v1/users/{id}",
+    params(
+        ("id" = i32, Path, description = "User ID")
+    ),
+    responses(
+        (status = 204, description = "User deleted successfully"),
+        (status = 404, description = "User not found"),
+        (status = 500, description = "Internal server error")
+    ),
+    tag = "Users"
+)]
 pub async fn delete_user(
     State(pool): State<PgPool>,
     Path(id): Path<i32>,

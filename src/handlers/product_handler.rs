@@ -10,6 +10,15 @@ use sqlx::PgPool;
 use crate::models::product::{CreateProduct, Product, UpdateProduct};
 
 /// Get all products
+#[utoipa::path(
+    get,
+    path = "/api/v1/products",
+    responses(
+        (status = 200, description = "List of all products", body = [Product]),
+        (status = 500, description = "Internal server error")
+    ),
+    tag = "Products"
+)]
 pub async fn get_all_products(
     State(pool): State<PgPool>,
 ) -> Result<Json<Vec<Product>>, (StatusCode, String)> {
@@ -27,6 +36,19 @@ pub async fn get_all_products(
 }
 
 /// Get a single product by ID
+#[utoipa::path(
+    get,
+    path = "/api/v1/products/{id}",
+    params(
+        ("id" = i32, Path, description = "Product ID")
+    ),
+    responses(
+        (status = 200, description = "Product found", body = Product),
+        (status = 404, description = "Product not found"),
+        (status = 500, description = "Internal server error")
+    ),
+    tag = "Products"
+)]
 pub async fn get_product(
     State(pool): State<PgPool>,
     Path(id): Path<i32>,
@@ -53,6 +75,16 @@ pub async fn get_product(
 }
 
 /// Create a new product
+#[utoipa::path(
+    post,
+    path = "/api/v1/products",
+    request_body = CreateProduct,
+    responses(
+        (status = 201, description = "Product created successfully", body = Product),
+        (status = 500, description = "Internal server error")
+    ),
+    tag = "Products"
+)]
 pub async fn create_product(
     State(pool): State<PgPool>,
     Json(payload): Json<CreateProduct>,
@@ -75,6 +107,20 @@ pub async fn create_product(
 }
 
 /// Update an existing product
+#[utoipa::path(
+    put,
+    path = "/api/v1/products/{id}",
+    params(
+        ("id" = i32, Path, description = "Product ID")
+    ),
+    request_body = UpdateProduct,
+    responses(
+        (status = 200, description = "Product updated successfully", body = Product),
+        (status = 404, description = "Product not found"),
+        (status = 500, description = "Internal server error")
+    ),
+    tag = "Products"
+)]
 pub async fn update_product(
     State(pool): State<PgPool>,
     Path(id): Path<i32>,
@@ -123,6 +169,19 @@ pub async fn update_product(
 }
 
 /// Delete a product
+#[utoipa::path(
+    delete,
+    path = "/api/v1/products/{id}",
+    params(
+        ("id" = i32, Path, description = "Product ID")
+    ),
+    responses(
+        (status = 204, description = "Product deleted successfully"),
+        (status = 404, description = "Product not found"),
+        (status = 500, description = "Internal server error")
+    ),
+    tag = "Products"
+)]
 pub async fn delete_product(
     State(pool): State<PgPool>,
     Path(id): Path<i32>,

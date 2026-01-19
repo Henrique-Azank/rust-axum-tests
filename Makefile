@@ -88,6 +88,27 @@ docker-exec: ## Execute shell in app container
 db-shell: ## Execute psql shell in database container
 	docker compose exec postgres psql -U postgres -d axumdb
 
+# Development database commands
+
+db-up: ## Start only the database (for local development)
+	@echo "Starting development database..."
+	docker compose -f docker-compose.dev.yml up -d
+
+db-down: ## Stop development database
+	@echo "Stopping development database..."
+	docker compose -f docker-compose.dev.yml down
+
+db-down-volumes: ## Stop development database and remove volumes
+	@echo "Stopping development database and removing volumes..."
+	docker compose -f docker-compose.dev.yml down -v
+
+db-logs: ## View database logs
+	@echo "Viewing database logs..."
+	docker compose -f docker-compose.dev.yml logs -f
+
+db-shell-dev: ## Execute psql shell in development database container
+	docker compose -f docker-compose.dev.yml exec postgres psql -U ${DB_USER} -d ${DB_NAME}
+
 # Database migration commands
 
 install-tools: ## Install development tools

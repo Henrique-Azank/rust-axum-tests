@@ -6,10 +6,48 @@ use axum::{
 };
 use serde_json::{json, Value};
 use sqlx::PgPool;
+use utoipa::OpenApi;
+use utoipa_swagger_ui::SwaggerUi;
 
 // Project dependencies
 mod product_handler;
 mod user_handler;
+
+use crate::models::{product::*, user::*};
+
+#[derive(OpenApi)]
+#[openapi(
+    paths(
+        // User endpoints
+        user_handler::get_all_users,
+        user_handler::get_user,
+        user_handler::create_user,
+        user_handler::update_user,
+        user_handler::delete_user,
+        // Product endpoints
+        product_handler::get_all_products,
+        product_handler::get_product,
+        product_handler::create_product,
+        product_handler::update_product,
+        product_handler::delete_product,
+    ),
+    components(
+        schemas(User, CreateUser, UpdateUser, Product, CreateProduct, UpdateProduct)
+    ),
+    tags(
+        (name = "Users", description = "User management endpoints"),
+        (name = "Products", description = "Product management endpoints")
+    ),
+    info(
+        title = "Rust Axum Microservice API",
+        version = "1.0.0",
+        description = "A RESTful API built with Axum framework and PostgreSQL",
+        contact(
+            name = "Henrique Azank",
+        )
+    )
+)]
+struct ApiDoc;
 
 /// Health check endpoint
 async fn health_check() -> (StatusCode, Json<Value>) {
@@ -26,6 +64,8 @@ async fn health_check() -> (StatusCode, Json<Value>) {
 /// Configure all application routes
 pub fn router() -> Router<PgPool> {
     Router::new()
+        // Swagger UI
+        .merge(SwaggerUi::new("/swagger-ui").url("/api-docs/openapi.json", ApiDoc::openapi()))
         // Health check
         .route("/health", get(health_check))
         // User routes
