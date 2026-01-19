@@ -1,3 +1,4 @@
+// Third-party imports
 use axum::{
     extract::{Path, State},
     http::StatusCode,
@@ -5,6 +6,7 @@ use axum::{
 };
 use sqlx::PgPool;
 
+// Project dependencies
 use crate::models::user::{CreateUser, UpdateUser, User};
 
 /// Get all users
@@ -37,7 +39,10 @@ pub async fn get_user(
         })?
         .ok_or_else(|| {
             tracing::warn!("User {} not found", id);
-            (StatusCode::NOT_FOUND, format!("User with id {} not found", id))
+            (
+                StatusCode::NOT_FOUND,
+                format!("User with id {} not found", id),
+            )
         })?;
 
     Ok(Json(user))
@@ -71,18 +76,22 @@ pub async fn update_user(
     Json(payload): Json<UpdateUser>,
 ) -> Result<Json<User>, (StatusCode, String)> {
     // First, check if user exists
-    let existing_user = sqlx::query_as::<_, User>("SELECT id, name, email FROM users WHERE id = $1")
-        .bind(id)
-        .fetch_optional(&pool)
-        .await
-        .map_err(|e| {
-            tracing::error!("Failed to fetch user {}: {}", id, e);
-            (StatusCode::INTERNAL_SERVER_ERROR, e.to_string())
-        })?
-        .ok_or_else(|| {
-            tracing::warn!("User {} not found", id);
-            (StatusCode::NOT_FOUND, format!("User with id {} not found", id))
-        })?;
+    let existing_user =
+        sqlx::query_as::<_, User>("SELECT id, name, email FROM users WHERE id = $1")
+            .bind(id)
+            .fetch_optional(&pool)
+            .await
+            .map_err(|e| {
+                tracing::error!("Failed to fetch user {}: {}", id, e);
+                (StatusCode::INTERNAL_SERVER_ERROR, e.to_string())
+            })?
+            .ok_or_else(|| {
+                tracing::warn!("User {} not found", id);
+                (
+                    StatusCode::NOT_FOUND,
+                    format!("User with id {} not found", id),
+                )
+            })?;
 
     // Use existing values if not provided in payload
     let name = payload.name.unwrap_or(existing_user.name);
@@ -121,7 +130,10 @@ pub async fn delete_user(
 
     if result.rows_affected() == 0 {
         tracing::warn!("User {} not found for deletion", id);
-        return Err((StatusCode::NOT_FOUND, format!("User with id {} not found", id)));
+        return Err((
+            StatusCode::NOT_FOUND,
+            format!("User with id {} not found", id),
+        ));
     }
 
     tracing::info!("Deleted user {}", id);

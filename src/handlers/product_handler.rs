@@ -1,3 +1,4 @@
+// Third-party imports
 use axum::{
     extract::{Path, State},
     http::StatusCode,
@@ -5,6 +6,7 @@ use axum::{
 };
 use sqlx::PgPool;
 
+// Project dependencies
 use crate::models::product::{CreateProduct, Product, UpdateProduct};
 
 /// Get all products
@@ -41,7 +43,10 @@ pub async fn get_product(
     })?
     .ok_or_else(|| {
         tracing::warn!("Product {} not found", id);
-        (StatusCode::NOT_FOUND, format!("Product with id {} not found", id))
+        (
+            StatusCode::NOT_FOUND,
+            format!("Product with id {} not found", id),
+        )
     })?;
 
     Ok(Json(product))
@@ -88,7 +93,10 @@ pub async fn update_product(
     })?
     .ok_or_else(|| {
         tracing::warn!("Product {} not found", id);
-        (StatusCode::NOT_FOUND, format!("Product with id {} not found", id))
+        (
+            StatusCode::NOT_FOUND,
+            format!("Product with id {} not found", id),
+        )
     })?;
 
     // Use existing values if not provided in payload
@@ -130,7 +138,10 @@ pub async fn delete_product(
 
     if result.rows_affected() == 0 {
         tracing::warn!("Product {} not found for deletion", id);
-        return Err((StatusCode::NOT_FOUND, format!("Product with id {} not found", id)));
+        return Err((
+            StatusCode::NOT_FOUND,
+            format!("Product with id {} not found", id),
+        ));
     }
 
     tracing::info!("Deleted product {}", id);
