@@ -1,5 +1,5 @@
 
-- Investigate the implementation of the Utoipa API docs framework
+- Investigate the implementation of the Utoipa API docs framework [DONE]
 - Implement the JWT middleware for authenticating/validating and parsing context data
 - Implement a testing workflow for validating the created endpoints and insert it to CI/CD
 - Implement an ADMIN interface framework or the necessary libraries for creating our own (e.g HTMX)
@@ -7,3 +7,4 @@
     - Implement common scripts for managing the database and other quality of life scripts
 - Create an example of usage of GCP client libraries (e.g static assets signing in buckets)
 - Test common POSTGRESQL patterns using sqlx (like batch inserts and on delete cascades)
+- Create a binary directory that hosts CLI tools for performing common operations on the models

@@ -33,3 +33,6 @@ cobertura.xml
 # Backup files
 *.bak
 *~
+
+# Misc
+prev.txt
